@@ -6,10 +6,12 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 )
 
 type ECSClient interface {
 	ListServices(ctx context.Context, cluster string) (seviceArns []string, e error)
+	DescribeServices(ctx context.Context, cluster string) ([]types.Service, error)
 
 	ScaleinService(ctx context.Context, cluster string, service string) error
 
