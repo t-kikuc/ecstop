@@ -16,7 +16,7 @@ func (c *ecsClient) ListClusters(ctx context.Context) (clusterArns []string, err
 	return out.ClusterArns, nil
 }
 
-func (c *ecsClient) ListServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
+func (c *ecsClient) listServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
 	out, err := c.client.ListServices(ctx, &ecs.ListServicesInput{
 		Cluster: aws.String(cluster),
 	})
@@ -27,7 +27,7 @@ func (c *ecsClient) ListServices(ctx context.Context, cluster string) (seviceArn
 }
 
 func (c *ecsClient) DescribeServices(ctx context.Context, cluster string) ([]types.Service, error) {
-	serviceArns, err := c.ListServices(ctx, cluster)
+	serviceArns, err := c.listServices(ctx, cluster)
 	if err != nil {
 		return nil, err
 	}

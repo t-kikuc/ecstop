@@ -65,21 +65,6 @@ func (mr *MockECSClientMockRecorder) ListClusters(ctx interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListClusters", reflect.TypeOf((*MockECSClient)(nil).ListClusters), ctx)
 }
 
-// ListServices mocks base method.
-func (m *MockECSClient) ListServices(ctx context.Context, cluster string) ([]string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListServices", ctx, cluster)
-	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ListServices indicates an expected call of ListServices.
-func (mr *MockECSClientMockRecorder) ListServices(ctx, cluster interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListServices", reflect.TypeOf((*MockECSClient)(nil).ListServices), ctx, cluster)
-}
-
 // ScaleinService mocks base method.
 func (m *MockECSClient) ScaleinService(ctx context.Context, cluster, service string) error {
 	m.ctrl.T.Helper()

@@ -32,8 +32,8 @@ func NewScaleinServiceCommand() *cobra.Command {
 		flag_allClusters = "all-clusters"
 	)
 
-	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Cluster name to scale-in services")
-	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Scale-in services of all clusters in the region")
+	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Name or ARN of the cluster to scale-in services")
+	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Whether scaleing-in services of all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
@@ -48,26 +48,26 @@ func (o *serviceOptions) scaleinServices(ctx context.Context) error {
 	}
 
 	if o.allClusters {
-		return scaleinServicesOfClusters(ctx, cli)
+		return scaleinServicesInClusters(ctx, cli)
 	} else {
-		return scaleinServicesOfCluster(ctx, cli, o.cluster)
+		return scaleinServicesInCluster(ctx, cli, o.cluster)
 	}
 }
 
-func scaleinServicesOfClusters(ctx context.Context, cli client.ECSClient) error {
+func scaleinServicesInClusters(ctx context.Context, cli client.ECSClient) error {
 	clusters, err := cli.ListClusters(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to list clusters: %w", err)
 	}
 	for _, cluster := range clusters {
-		if err = scaleinServicesOfCluster(ctx, cli, cluster); err != nil {
+		if err = scaleinServicesInCluster(ctx, cli, cluster); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func scaleinServicesOfCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
+func scaleinServicesInCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
 
 	services, e := cli.DescribeServices(ctx, cluster)
 	if e != nil {
