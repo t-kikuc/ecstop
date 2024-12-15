@@ -43,7 +43,7 @@ func NewStopTaskCommand() *cobra.Command {
 
 	// Cluster
 	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Cluster name/arn to scale-in tasks")
-	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Scale-in services of all clusters in the region")
+	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Scale-in tasks of all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)

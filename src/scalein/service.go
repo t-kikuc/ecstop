@@ -33,7 +33,7 @@ func NewScaleinServiceCommand() *cobra.Command {
 	)
 
 	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Name or ARN of the cluster to scale-in services")
-	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Whether scaleing-in services of all clusters in the region")
+	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Scale-in services of all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
