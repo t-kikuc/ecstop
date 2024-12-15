@@ -8,6 +8,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 )
 
+func (c *ecsClient) ListClusters(ctx context.Context) (clusterArns []string, err error) {
+	out, err := c.client.ListClusters(ctx, &ecs.ListClustersInput{}) // TODO: pagination (up to 100 clusters by default)
+	if err != nil {
+		return nil, err
+	}
+	return out.ClusterArns, nil
+}
+
 func (c *ecsClient) ListServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
 	out, err := c.client.ListServices(ctx, &ecs.ListServicesInput{
 		Cluster: aws.String(cluster),
@@ -56,4 +64,14 @@ func (c *ecsClient) ScaleinService(ctx context.Context, cluster string, service 
 	}
 
 	return nil
+}
+
+func (c *ecsClient) ListStandaloneTasks(ctx context.Context, cluster string) (taskArns []string, err error) {
+	out, err := c.client.ListTasks(ctx, &ecs.ListTasksInput{
+		Cluster: aws.String(cluster),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out.TaskArns, nil
 }

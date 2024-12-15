@@ -11,7 +11,8 @@ import (
 
 // serviceOptions is the options for scaling-in ECS services
 type serviceOptions struct {
-	cluster string
+	cluster     string
+	allClusters bool
 }
 
 func NewScaleinServiceCommand() *cobra.Command {
@@ -19,40 +20,70 @@ func NewScaleinServiceCommand() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "service",
-		Short: "Scale-in ECS Services of the cluster",
+		Short: "Scale-in ECS Services",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.scaleinServices(context.Background())
 		},
 	}
 
-	c.Flags().StringVar(&o.cluster, "cluster", "", "Cluster name to scale-in services")
-	c.MarkFlagRequired("cluster")
+	const (
+		flag_cluster     = "cluster"
+		flag_allClusters = "all-clusters"
+	)
+
+	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Cluster name to scale-in services")
+	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Scale-in services of all clusters in the region")
+
+	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
+	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
 
 	return c
 }
 
 func (o *serviceOptions) scaleinServices(ctx context.Context) error {
-	cli, e := client.NewDefaultClient()
-	if e != nil {
-		return e
+	cli, err := client.NewDefaultClient()
+	if err != nil {
+		return err
 	}
 
-	services, e := cli.DescribeServices(ctx, o.cluster)
+	if o.allClusters {
+		return scaleinServicesOfClusters(ctx, cli)
+	} else {
+		return scaleinServicesOfCluster(ctx, cli, o.cluster)
+	}
+}
+
+func scaleinServicesOfClusters(ctx context.Context, cli client.ECSClient) error {
+	clusters, err := cli.ListClusters(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to list clusters: %w", err)
+	}
+	for _, cluster := range clusters {
+		if err = scaleinServicesOfCluster(ctx, cli, cluster); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func scaleinServicesOfCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
+
+	services, e := cli.DescribeServices(ctx, cluster)
 	if e != nil {
-		return fmt.Errorf("failed to list services of cluster %s: %w", o.cluster, e)
+		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, e)
 	}
 	if len(services) == 0 {
-		fmt.Printf("No service found in cluster %s\n", o.cluster)
+		fmt.Printf("No service found in cluster %s\n", cluster)
 		return nil
 	}
 
 	runningServices := filterRunning(services)
-	printPreSummary(services, runningServices)
+	printPreSummary(cluster, services, runningServices)
 
 	// Scale-in services
 	for i, s := range runningServices {
-		e := cli.ScaleinService(ctx, o.cluster, *s.ServiceName)
+		e := cli.ScaleinService(ctx, cluster, *s.ServiceName)
 		if e != nil {
 			return fmt.Errorf("failed to scale-in [%d]%s: %w", i+1, *s.ServiceName, e)
 		} else {
@@ -74,17 +105,17 @@ func filterRunning(services []types.Service) []types.Service {
 	return runningServices
 }
 
-func printPreSummary(services []types.Service, runningServices []types.Service) {
+func printPreSummary(cluster string, services []types.Service, runningServices []types.Service) {
 	total := len(services)
 	running := len(runningServices)
 
-	fmt.Printf("Total Services: %d, Running Services: %d\n", total, running)
+	fmt.Printf("[%s] Total Services: %d, Running Services: %d\n", cluster, total, running)
 	if running > 0 {
 		fmt.Println("Running Services:")
 		for i, s := range runningServices {
 			fmt.Printf(" [%d]  %s:: running %d, desired: %d\n", i+1, *s.ServiceName, s.RunningCount, s.DesiredCount)
 		}
 	} else {
-		fmt.Println("No service to scale-in")
+		fmt.Println(" -> No service to scale-in")
 	}
 }

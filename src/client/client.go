@@ -10,7 +10,9 @@ import (
 )
 
 type ECSClient interface {
-	ListServices(ctx context.Context, cluster string) (seviceArns []string, e error)
+	ListClusters(ctx context.Context) (clusterArns []string, err error)
+
+	ListServices(ctx context.Context, cluster string) (seviceArns []string, err error)
 	DescribeServices(ctx context.Context, cluster string) ([]types.Service, error)
 
 	ScaleinService(ctx context.Context, cluster string, service string) error
