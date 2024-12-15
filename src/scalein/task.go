@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/spf13/cobra"
 
-	"github.com/t-kikuc/ecscale0/src/client"
+	"github.com/t-kikuc/ecs0/src/client"
 )
 
 type taskOptions struct {

@@ -1,4 +1,4 @@
-module github.com/t-kikuc/ecscale0
+module github.com/t-kikuc/ecs0
 
 go 1.21.3
 
