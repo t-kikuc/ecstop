@@ -2,6 +2,7 @@ package scalein
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -17,6 +18,7 @@ type taskOptions struct {
 	group       string
 	groupPrefix string
 	standalone  bool
+	// TODO: Add --all-group? (dangerous...)
 }
 
 func NewStopTaskCommand() *cobra.Command {
@@ -51,6 +53,7 @@ func NewStopTaskCommand() *cobra.Command {
 	c.Flags().StringVar(&o.groupPrefix, flag_groupPrefix, "", "Group name prefix to scale-in tasks")
 	c.Flags().BoolVar(&o.standalone, flag_standalone, false, "Scale-in standalone tasks")
 
+	c.MarkFlagsOneRequired(flag_group, flag_groupPrefix, flag_standalone)
 	c.MarkFlagsMutuallyExclusive(flag_group, flag_groupPrefix, flag_standalone)
 
 	return c
@@ -87,13 +90,19 @@ func (o *taskOptions) stopTasksInCluster(ctx context.Context, cli client.ECSClie
 	if err != nil {
 		return err
 	}
+	if len(tasks) == 0 {
+		fmt.Printf("[%s] No tasks found in cluster\n", cluster)
+		return nil
+	}
 
-	tasks = o.filterByGroup(tasks)
+	matchedTasks := o.filterByGroup(tasks)
+	printPreSummaryTask(cluster, tasks, matchedTasks)
 
-	for _, task := range tasks {
+	for _, task := range matchedTasks {
 		if err = cli.StopTask(ctx, cluster, *task.TaskArn); err != nil {
 			return err
 		}
+		fmt.Printf(" -> Successfully stopped Task: %s\n", *task.TaskArn)
 	}
 	return nil
 }
@@ -112,11 +121,22 @@ func (o *taskOptions) filterByGroup(tasks []types.Task) []types.Task {
 			continue
 		}
 
-		// C. Standalone Tasks. Service Tasks have "service:<service-name>" prefix.
+		// C. Standalone Tasks. The group of service tasks is "service:<service-name>".
 		if o.standalone && !strings.HasPrefix(*task.Group, "service:") {
 			filtered = append(filtered, task)
 			continue
 		}
 	}
 	return filtered
+}
+func printPreSummaryTask(cluster string, all, matched []types.Task) {
+	fmt.Printf("[%s] All Tasks: %d, Tasks to stop: %d\n", cluster, len(all), len(matched))
+	if len(matched) > 0 {
+		fmt.Println("Tasks to stop:")
+		for i, task := range matched {
+			fmt.Printf(" [%d] Group: %s, Arn: %s\n", i+1, *task.Group, *task.TaskArn)
+		}
+	} else {
+		fmt.Println(" -> No tasks to stop")
+	}
 }
