@@ -50,6 +50,21 @@ func (mr *MockECSClientMockRecorder) DescribeServices(ctx, cluster interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeServices", reflect.TypeOf((*MockECSClient)(nil).DescribeServices), ctx, cluster)
 }
 
+// DescribeTasks mocks base method.
+func (m *MockECSClient) DescribeTasks(ctx context.Context, cluster string) ([]types.Task, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DescribeTasks", ctx, cluster)
+	ret0, _ := ret[0].([]types.Task)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeTasks indicates an expected call of DescribeTasks.
+func (mr *MockECSClientMockRecorder) DescribeTasks(ctx, cluster interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeTasks", reflect.TypeOf((*MockECSClient)(nil).DescribeTasks), ctx, cluster)
+}
+
 // ListClusters mocks base method.
 func (m *MockECSClient) ListClusters(ctx context.Context) ([]string, error) {
 	m.ctrl.T.Helper()
@@ -77,4 +92,18 @@ func (m *MockECSClient) ScaleinService(ctx context.Context, cluster, service str
 func (mr *MockECSClientMockRecorder) ScaleinService(ctx, cluster, service interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ScaleinService", reflect.TypeOf((*MockECSClient)(nil).ScaleinService), ctx, cluster, service)
+}
+
+// StopTask mocks base method.
+func (m *MockECSClient) StopTask(ctx context.Context, cluster, taskArn string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StopTask", ctx, cluster, taskArn)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// StopTask indicates an expected call of StopTask.
+func (mr *MockECSClientMockRecorder) StopTask(ctx, cluster, taskArn interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StopTask", reflect.TypeOf((*MockECSClient)(nil).StopTask), ctx, cluster, taskArn)
 }

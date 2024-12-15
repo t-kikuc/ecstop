@@ -13,8 +13,10 @@ type ECSClient interface {
 	ListClusters(ctx context.Context) (clusterArns []string, err error)
 
 	DescribeServices(ctx context.Context, cluster string) ([]types.Service, error)
-
 	ScaleinService(ctx context.Context, cluster string, service string) error
+
+	DescribeTasks(ctx context.Context, cluster string) ([]types.Task, error)
+	StopTask(ctx context.Context, cluster, taskArn string) error
 
 	// DeleteActiveTaskDefinitions(ctx context.Context, taskDefArns []string) error
 	// DeleteInactiveTaskDefinitions(ctx context.Context, taskDefArns []string) error

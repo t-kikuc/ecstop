@@ -23,6 +23,7 @@ func main() {
 	// Register commands
 	commands := []*cobra.Command{
 		scalein.NewScaleinServiceCommand(),
+		scalein.NewStopTaskCommand(),
 		// deletetaskdef.NewCommand(),
 		// deletetasksets.NewCommand(),
 	}
