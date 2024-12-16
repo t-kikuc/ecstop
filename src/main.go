@@ -12,9 +12,6 @@ var rootCmd = &cobra.Command{
 	Use:   "ecstop",
 	Short: "Scale-in ECS Services and Tasks",
 	Long:  ``,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -24,6 +21,7 @@ func main() {
 	commands := []*cobra.Command{
 		stop.NewStopServiceCommand(),
 		stop.NewStopTaskCommand(),
+		stop.NewStopAllCommand(),
 		// deletetaskdef.NewCommand(),
 		// deletetasksets.NewCommand(),
 	}
