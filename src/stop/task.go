@@ -1,4 +1,4 @@
-package scalein
+package stop
 
 import (
 	"context"

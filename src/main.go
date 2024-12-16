@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/t-kikuc/ecstop/src/scalein"
+	"github.com/t-kikuc/ecstop/src/stop"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -22,8 +22,8 @@ var rootCmd = &cobra.Command{
 func main() {
 	// Register commands
 	commands := []*cobra.Command{
-		scalein.NewScaleinServiceCommand(),
-		scalein.NewStopTaskCommand(),
+		stop.NewStopServiceCommand(),
+		stop.NewStopTaskCommand(),
 		// deletetaskdef.NewCommand(),
 		// deletetasksets.NewCommand(),
 	}

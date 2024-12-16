@@ -1,4 +1,4 @@
-package scalein
+package stop
 
 import (
 	"context"
@@ -15,12 +15,12 @@ type serviceOptions struct {
 	allClusters bool
 }
 
-func NewScaleinServiceCommand() *cobra.Command {
+func NewStopServiceCommand() *cobra.Command {
 	o := &serviceOptions{}
 
 	c := &cobra.Command{
 		Use:   "service",
-		Short: "Scale-in ECS Services",
+		Short: "Scale-in ECS Services by updating desiredCount to 0",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.scaleinServices(context.Background())
