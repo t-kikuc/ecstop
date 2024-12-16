@@ -113,7 +113,7 @@ func (c *ecsClient) StopTask(ctx context.Context, cluster, taskArn string) error
 	_, err := c.client.StopTask(ctx, &ecs.StopTaskInput{
 		Cluster: aws.String(cluster),
 		Task:    aws.String(taskArn),
-		Reason:  aws.String("task was stopped by ecs0"),
+		Reason:  aws.String("task was stopped by ecstop"),
 	})
 	if err != nil {
 		return err

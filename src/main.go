@@ -4,12 +4,12 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/t-kikuc/ecs0/src/scalein"
+	"github.com/t-kikuc/ecstop/src/scalein"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ecs0",
+	Use:   "ecstop",
 	Short: "Scale-in ECS Services and Tasks",
 	Long:  ``,
 	// Uncomment the following line if your bare application

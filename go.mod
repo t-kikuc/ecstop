@@ -1,4 +1,4 @@
-module github.com/t-kikuc/ecs0
+module github.com/t-kikuc/ecstop
 
 go 1.21.3
 
