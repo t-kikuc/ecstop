@@ -18,7 +18,7 @@ func NewStopInstanceCommand() *cobra.Command {
 	o := &instanceOptions{}
 
 	c := &cobra.Command{
-		Use:   "instance",
+		Use:   "instances",
 		Short: "Stop ECS Container Instances",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {

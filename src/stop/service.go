@@ -19,7 +19,7 @@ func NewStopServiceCommand() *cobra.Command {
 	o := &serviceOptions{}
 
 	c := &cobra.Command{
-		Use:   "service",
+		Use:   "services",
 		Short: "Scale-in ECS Services by updating desiredCount to 0",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
