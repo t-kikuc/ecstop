@@ -18,6 +18,8 @@ type ECSClient interface {
 	DescribeTasks(ctx context.Context, cluster string) ([]types.Task, error)
 	StopTask(ctx context.Context, cluster, taskArn string) error
 
+	ListContainerInstances(ctx context.Context, cluster string) (instanceIDs []string, err error)
+
 	// DeleteActiveTaskDefinitions(ctx context.Context, taskDefArns []string) error
 	// DeleteInactiveTaskDefinitions(ctx context.Context, taskDefArns []string) error
 }

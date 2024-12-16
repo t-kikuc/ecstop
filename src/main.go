@@ -10,7 +10,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ecstop",
-	Short: "Scale-in ECS Services and Tasks",
+	Short: "Stop ECS resources",
 	Long:  ``,
 }
 
@@ -21,6 +21,7 @@ func main() {
 	commands := []*cobra.Command{
 		stop.NewStopServiceCommand(),
 		stop.NewStopTaskCommand(),
+		stop.NewStopInstanceCommand(),
 		stop.NewStopAllCommand(),
 		// deletetaskdef.NewCommand(),
 		// deletetasksets.NewCommand(),
