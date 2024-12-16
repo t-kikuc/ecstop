@@ -1,8 +1,8 @@
 # ecstop
 
-ecstop is a tool to quickly clean your ECS resources to save costs.
+ecstop is a tool to quickly clean your running ECS resources to save costs.
 
-Pronounce: e-c-stop
+Pronounce: ee-c-stop
 
 
 <!-- 
@@ -13,15 +13,14 @@ Pronounce: e-c-stop
 3. Scheduled in AWS
 -->
 
-
-# Commands
+## Commands
 
 - [`services`](#services): Scale-in Services
 - [`tasks`](#tasks): Stop Tasks
 - [`instances`](#instances): Stop Container Instances
 - [`all`](#all): Stop the above 3 resources
 
-## `services`
+### `services`
 
 `ecstop services` updates `desiredCount` of ECS services to 0.
 
@@ -37,7 +36,7 @@ Flags:
 - Only one of `--all-clusters` or `--cluster` is required.
 
 
-## `tasks`
+### `tasks`
 
 `ecstop tasks` stops ECS tasks.
 
@@ -58,7 +57,7 @@ Flags:
   - ecstop stops all tasks whose `group` matches the condition.
   - `--standalone` stops tasks whose `group`'s prefix is NOT `service:`.
 
-## `instances`
+### `instances`
 
 `ecstop instances` stops container instances.
 
@@ -73,7 +72,7 @@ Flags:
 
 - Only one of `--all-clusters` or `--cluster` is required.
 
-## `all`
+### `all`
 
 `ecstop all` stops services, standalone tasks, and container instances.
 
