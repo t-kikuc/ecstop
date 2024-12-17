@@ -17,13 +17,22 @@ func (c *ecsClient) ListClusters(ctx context.Context) (clusterArns []string, err
 }
 
 func (c *ecsClient) listServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
-	out, err := c.client.ListServices(ctx, &ecs.ListServicesInput{
-		Cluster: aws.String(cluster),
-	})
-	if err != nil {
-		return nil, err
+	in := &ecs.ListServicesInput{
+		Cluster:    aws.String(cluster),
+		MaxResults: aws.Int32(100),
 	}
-	return out.ServiceArns, nil
+	for {
+		out, err := c.client.ListServices(ctx, in)
+		if err != nil {
+			return nil, err
+		}
+		seviceArns = append(seviceArns, out.ServiceArns...)
+		if out.NextToken == nil {
+			break
+		}
+		in.NextToken = out.NextToken
+	}
+	return seviceArns, nil
 }
 
 func (c *ecsClient) DescribeServices(ctx context.Context, cluster string) ([]types.Service, error) {

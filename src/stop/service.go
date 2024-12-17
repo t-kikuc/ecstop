@@ -68,7 +68,6 @@ func scaleinServicesInClusters(ctx context.Context, cli client.ECSClient) error 
 }
 
 func scaleinServicesInCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
-
 	services, e := cli.DescribeServices(ctx, cluster)
 	if e != nil {
 		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, e)
@@ -98,7 +97,8 @@ func scaleinServicesInCluster(ctx context.Context, cli client.ECSClient, cluster
 func filterRunning(services []types.Service) []types.Service {
 	var runningServices []types.Service
 	for _, s := range services {
-		if s.RunningCount > 0 {
+		// Sometimes RunningCount>0 although DesiredCount is already 0
+		if s.DesiredCount > 0 || s.RunningCount > 0 {
 			runningServices = append(runningServices, s)
 		}
 	}
