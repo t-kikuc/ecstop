@@ -1,8 +1,8 @@
-# ecstop
+# ecstop:  ECS+Stop
 
-ecstop is a tool to quickly clean your running ECS resources to save costs.
+ecstop is a CLI tool to quickly clean your running ECS resources to save costs.
 
-Pronounce: ee-c-stop
+Pronounce: ee-c-s-top / ee-c-stop
 
 
 <!-- 
