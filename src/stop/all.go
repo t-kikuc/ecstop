@@ -60,5 +60,15 @@ func (o *allOptions) stopAll(ctx context.Context) error {
 	}
 	fmt.Println("[2] Successfully finished stopping ECS Standalone Tasks")
 
+	fmt.Println("[3] Start stopping ECS Container Instances")
+	instOpts := &instanceOptions{
+		cluster:     o.cluster,
+		allClusters: o.allClusters,
+	}
+	if err := instOpts.stopInstances(ctx); err != nil {
+		return fmt.Errorf("failed while stopping ECS Container Instances: %w", err)
+	}
+	fmt.Println("[3] Successfully finished stopping ECS Container Instances")
+
 	return nil
 }
