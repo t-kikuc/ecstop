@@ -60,7 +60,7 @@ func NewStopTaskCommand() *cobra.Command {
 }
 
 func (o *taskOptions) stopTasks(ctx context.Context) error {
-	cli, err := client.NewDefaultClient()
+	cli, err := client.NewECSClient()
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func (o *taskOptions) stopTasks(ctx context.Context) error {
 	}
 }
 
-func (o *taskOptions) stopTasksInClusters(ctx context.Context, cli client.ECSClient) error {
+func (o *taskOptions) stopTasksInClusters(ctx context.Context, cli *client.ECSClient) error {
 	clusters, err := cli.ListClusters(ctx)
 	if err != nil {
 		return err
@@ -85,7 +85,7 @@ func (o *taskOptions) stopTasksInClusters(ctx context.Context, cli client.ECSCli
 	return nil
 }
 
-func (o *taskOptions) stopTasksInCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
+func (o *taskOptions) stopTasksInCluster(ctx context.Context, cli *client.ECSClient, cluster string) error {
 	tasks, err := cli.DescribeTasks(ctx, cluster)
 	if err != nil {
 		return err

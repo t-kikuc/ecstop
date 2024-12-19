@@ -2,13 +2,34 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 )
 
-func (c *ecsClient) ListClusters(ctx context.Context) (clusterArns []string, err error) {
+type ECSClient struct {
+	client *ecs.Client
+}
+
+// Create a new ECS Client with default configuration
+func NewECSClient() (*ECSClient, error) {
+	cfg, err := config.LoadDefaultConfig(context.Background())
+	if err != nil {
+		fmt.Printf("unable to load SDK config, %v", err)
+		return nil, err
+	}
+
+	cli := &ECSClient{
+		client: ecs.NewFromConfig(cfg),
+	}
+
+	return cli, nil
+}
+
+func (c *ECSClient) ListClusters(ctx context.Context) (clusterArns []string, err error) {
 	out, err := c.client.ListClusters(ctx, &ecs.ListClustersInput{}) // TODO: pagination (up to 100 clusters by default)
 	if err != nil {
 		return nil, err
@@ -16,7 +37,7 @@ func (c *ecsClient) ListClusters(ctx context.Context) (clusterArns []string, err
 	return out.ClusterArns, nil
 }
 
-func (c *ecsClient) listServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
+func (c *ECSClient) listServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
 	in := &ecs.ListServicesInput{
 		Cluster:    aws.String(cluster),
 		MaxResults: aws.Int32(100),
@@ -35,7 +56,7 @@ func (c *ecsClient) listServices(ctx context.Context, cluster string) (seviceArn
 	return seviceArns, nil
 }
 
-func (c *ecsClient) DescribeServices(ctx context.Context, cluster string) ([]types.Service, error) {
+func (c *ECSClient) DescribeServices(ctx context.Context, cluster string) ([]types.Service, error) {
 	serviceArns, err := c.listServices(ctx, cluster)
 	if err != nil {
 		return nil, err
@@ -60,7 +81,7 @@ func (c *ecsClient) DescribeServices(ctx context.Context, cluster string) ([]typ
 	return services, nil
 }
 
-func (c *ecsClient) ScaleinService(ctx context.Context, cluster string, service string) error {
+func (c *ECSClient) ScaleinService(ctx context.Context, cluster string, service string) error {
 	_, err := c.client.UpdateService(ctx, &ecs.UpdateServiceInput{
 		Cluster:      aws.String(cluster),
 		Service:      aws.String(service),
@@ -73,7 +94,7 @@ func (c *ecsClient) ScaleinService(ctx context.Context, cluster string, service 
 	return nil
 }
 
-func (c *ecsClient) DescribeTasks(ctx context.Context, cluster string) (tasks []types.Task, err error) {
+func (c *ECSClient) DescribeTasks(ctx context.Context, cluster string) (tasks []types.Task, err error) {
 	taskArns, err := c.listTasks(ctx, cluster)
 	if err != nil {
 		return nil, err
@@ -98,7 +119,7 @@ func (c *ecsClient) DescribeTasks(ctx context.Context, cluster string) (tasks []
 	return tasks, nil
 }
 
-func (c *ecsClient) listTasks(ctx context.Context, cluster string) (taskArns []string, err error) {
+func (c *ECSClient) listTasks(ctx context.Context, cluster string) (taskArns []string, err error) {
 	listTaskIn := &ecs.ListTasksInput{
 		Cluster: aws.String(cluster),
 	}
@@ -118,7 +139,7 @@ func (c *ecsClient) listTasks(ctx context.Context, cluster string) (taskArns []s
 	return taskArns, nil
 }
 
-func (c *ecsClient) StopTask(ctx context.Context, cluster, taskArn string) error {
+func (c *ECSClient) StopTask(ctx context.Context, cluster, taskArn string) error {
 	_, err := c.client.StopTask(ctx, &ecs.StopTaskInput{
 		Cluster: aws.String(cluster),
 		Task:    aws.String(taskArn),
@@ -130,7 +151,7 @@ func (c *ecsClient) StopTask(ctx context.Context, cluster, taskArn string) error
 	return nil
 }
 
-func (c *ecsClient) ListContainerInstances(ctx context.Context, cluster string) (instanceIDs []string, err error) {
+func (c *ECSClient) ListContainerInstances(ctx context.Context, cluster string) (instanceIDs []string, err error) {
 	in := &ecs.ListContainerInstancesInput{
 		Cluster:    aws.String(cluster),
 		MaxResults: aws.Int32(100), // DescribeContainerInstances also supports up to 100 instances

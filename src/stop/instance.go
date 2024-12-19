@@ -42,7 +42,7 @@ func NewStopInstanceCommand() *cobra.Command {
 }
 
 func (o *instanceOptions) stopInstances(ctx context.Context) error {
-	cli, err := client.NewDefaultClient()
+	cli, err := client.NewECSClient()
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (o *instanceOptions) stopInstances(ctx context.Context) error {
 	}
 }
 
-func (o *instanceOptions) stopInstancesInClusters(ctx context.Context, cli client.ECSClient) error {
+func (o *instanceOptions) stopInstancesInClusters(ctx context.Context, cli *client.ECSClient) error {
 	clusters, err := cli.ListClusters(ctx)
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (o *instanceOptions) stopInstancesInClusters(ctx context.Context, cli clien
 	return nil
 }
 
-func (o *instanceOptions) stopInstancesInCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
+func (o *instanceOptions) stopInstancesInCluster(ctx context.Context, cli *client.ECSClient, cluster string) error {
 	instanceArns, err := cli.ListContainerInstances(ctx, cluster)
 	if err != nil {
 		return err

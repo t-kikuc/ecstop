@@ -42,7 +42,7 @@ func NewStopServiceCommand() *cobra.Command {
 }
 
 func (o *serviceOptions) scaleinServices(ctx context.Context) error {
-	cli, err := client.NewDefaultClient()
+	cli, err := client.NewECSClient()
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (o *serviceOptions) scaleinServices(ctx context.Context) error {
 	}
 }
 
-func scaleinServicesInClusters(ctx context.Context, cli client.ECSClient) error {
+func scaleinServicesInClusters(ctx context.Context, cli *client.ECSClient) error {
 	clusters, err := cli.ListClusters(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to list clusters: %w", err)
@@ -67,7 +67,7 @@ func scaleinServicesInClusters(ctx context.Context, cli client.ECSClient) error 
 	return nil
 }
 
-func scaleinServicesInCluster(ctx context.Context, cli client.ECSClient, cluster string) error {
+func scaleinServicesInCluster(ctx context.Context, cli *client.ECSClient, cluster string) error {
 	services, e := cli.DescribeServices(ctx, cluster)
 	if e != nil {
 		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, e)
