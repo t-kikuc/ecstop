@@ -23,7 +23,7 @@ func NewStopServiceCommand() *cobra.Command {
 		Short: "Scale-in ECS Services by updating desiredCount to 0",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return o.scaleinServices(context.Background())
+			return o.stop(context.Background())
 		},
 	}
 
@@ -41,7 +41,7 @@ func NewStopServiceCommand() *cobra.Command {
 	return c
 }
 
-func (o *serviceOptions) scaleinServices(ctx context.Context) error {
+func (o *serviceOptions) stop(ctx context.Context) error {
 	cli, err := client.NewECSClient()
 	if err != nil {
 		return err

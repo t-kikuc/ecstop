@@ -44,7 +44,7 @@ func (o *allOptions) stopAll(ctx context.Context) error {
 		cluster:     o.cluster,
 		allClusters: o.allClusters,
 	}
-	if err := srvOpts.scaleinServices(ctx); err != nil {
+	if err := srvOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Services: %w", err)
 	}
 	fmt.Println("[1] Successfully finished stopping ECS Services")
@@ -55,7 +55,7 @@ func (o *allOptions) stopAll(ctx context.Context) error {
 		allClusters: o.allClusters,
 		standalone:  true,
 	}
-	if err := taskOpts.stopTasks(ctx); err != nil {
+	if err := taskOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Standalone Tasks: %w", err)
 	}
 	fmt.Println("[2] Successfully finished stopping ECS Standalone Tasks")
@@ -65,7 +65,7 @@ func (o *allOptions) stopAll(ctx context.Context) error {
 		cluster:     o.cluster,
 		allClusters: o.allClusters,
 	}
-	if err := instOpts.stopInstances(ctx); err != nil {
+	if err := instOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Container Instances: %w", err)
 	}
 	fmt.Println("[3] Successfully finished stopping ECS Container Instances")

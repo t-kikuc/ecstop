@@ -29,7 +29,7 @@ func NewStopTaskCommand() *cobra.Command {
 		Short: "Stop ECS Tasks",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return o.stopTasks(context.Background())
+			return o.stop(context.Background())
 		},
 	}
 
@@ -59,33 +59,33 @@ func NewStopTaskCommand() *cobra.Command {
 	return c
 }
 
-func (o *taskOptions) stopTasks(ctx context.Context) error {
+func (o *taskOptions) stop(ctx context.Context) error {
 	cli, err := client.NewECSClient()
 	if err != nil {
 		return err
 	}
 
 	if o.allClusters {
-		return o.stopTasksInClusters(ctx, cli)
+		return o.stopInClusters(ctx, cli)
 	} else {
-		return o.stopTasksInCluster(ctx, cli, o.cluster)
+		return o.stopTasks(ctx, cli, o.cluster)
 	}
 }
 
-func (o *taskOptions) stopTasksInClusters(ctx context.Context, cli *client.ECSClient) error {
+func (o *taskOptions) stopInClusters(ctx context.Context, cli *client.ECSClient) error {
 	clusters, err := cli.ListClusters(ctx)
 	if err != nil {
 		return err
 	}
 	for _, cluster := range clusters {
-		if err = o.stopTasksInCluster(ctx, cli, cluster); err != nil {
+		if err = o.stopTasks(ctx, cli, cluster); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (o *taskOptions) stopTasksInCluster(ctx context.Context, cli *client.ECSClient, cluster string) error {
+func (o *taskOptions) stopTasks(ctx context.Context, cli *client.ECSClient, cluster string) error {
 	tasks, err := cli.DescribeTasks(ctx, cluster)
 	if err != nil {
 		return err
@@ -129,6 +129,7 @@ func (o *taskOptions) filterByGroup(tasks []types.Task) []types.Task {
 	}
 	return filtered
 }
+
 func printPreSummaryTask(cluster string, all, matched []types.Task) {
 	fmt.Printf("[%s] All Tasks: %d, Tasks to stop: %d\n", cluster, len(all), len(matched))
 	if len(matched) > 0 {
