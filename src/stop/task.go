@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/t-kikuc/ecstop/src/client"
+	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 type taskOptions struct {
@@ -34,19 +35,12 @@ func NewStopTaskCommand() *cobra.Command {
 	}
 
 	const (
-		flag_cluster     = "cluster"
-		flag_allClusters = "all-clusters"
 		flag_group       = "group"
 		flag_groupPrefix = "group-prefix"
 		flag_standalone  = "standalone"
 	)
 
-	// Cluster
-	c.Flags().StringVarP(&o.cluster, flag_cluster, "c", "", "Cluster name/arn to scale-in tasks")
-	c.Flags().BoolVarP(&o.allClusters, flag_allClusters, "a", false, "Stop tasks of all clusters in the region")
-
-	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
-	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
+	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
 
 	// Group
 	c.Flags().StringVar(&o.group, flag_group, "", "Group name to stop tasks")

@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/src/client"
+	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 type instanceOptions struct {
@@ -25,17 +26,7 @@ func NewStopInstanceCommand() *cobra.Command {
 		},
 	}
 
-	const (
-		flag_cluster     = "cluster"
-		flag_allClusters = "all-clusters"
-	)
-
-	// Cluster
-	c.Flags().StringVarP(&o.cluster, flag_cluster, "c", "", "Cluster name or ARN to stop instances")
-	c.Flags().BoolVarP(&o.allClusters, flag_allClusters, "a", false, "Stop instances of all clusters in the region")
-
-	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
-	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
+	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
 
 	return c
 }

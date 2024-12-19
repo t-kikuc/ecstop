@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 type allOptions struct {
@@ -24,16 +25,7 @@ func NewStopAllCommand() *cobra.Command {
 		},
 	}
 
-	const (
-		flag_cluster     = "cluster"
-		flag_allClusters = "all-clusters"
-	)
-
-	c.Flags().StringVarP(&o.cluster, flag_cluster, "c", "", "Name or ARN of the cluster to stop resources")
-	c.Flags().BoolVarP(&o.allClusters, flag_allClusters, "a", false, "Stop resources of all clusters in the region")
-
-	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
-	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
+	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
 
 	return c
 }
