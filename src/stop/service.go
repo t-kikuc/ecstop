@@ -14,6 +14,8 @@ import (
 type serviceOptions struct {
 	cluster     string
 	allClusters bool
+
+	awsConfig client.AWSConfig
 }
 
 func NewStopServiceCommand() *cobra.Command {
@@ -29,12 +31,13 @@ func NewStopServiceCommand() *cobra.Command {
 	}
 
 	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	return c
 }
 
 func (o *serviceOptions) stop(ctx context.Context) error {
-	cli, err := client.NewECSClient(ctx)
+	cli, err := o.awsConfig.NewECSClient(ctx)
 	if err != nil {
 		return err
 	}

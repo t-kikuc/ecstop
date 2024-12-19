@@ -20,6 +20,7 @@ type taskOptions struct {
 	groupPrefix string
 	standalone  bool
 	// TODO: Add --all-group? (dangerous...)
+	awsConfig client.AWSConfig
 }
 
 func NewStopTaskCommand() *cobra.Command {
@@ -41,6 +42,7 @@ func NewStopTaskCommand() *cobra.Command {
 	)
 
 	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	// Group
 	c.Flags().StringVar(&o.group, flag_group, "", "Group name to stop tasks")
@@ -54,7 +56,7 @@ func NewStopTaskCommand() *cobra.Command {
 }
 
 func (o *taskOptions) stop(ctx context.Context) error {
-	cli, err := client.NewECSClient(ctx)
+	cli, err := o.awsConfig.NewECSClient(ctx)
 	if err != nil {
 		return err
 	}

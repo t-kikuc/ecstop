@@ -12,6 +12,8 @@ import (
 type instanceOptions struct {
 	cluster     string
 	allClusters bool
+
+	awsConfig client.AWSConfig
 }
 
 func NewStopInstanceCommand() *cobra.Command {
@@ -27,38 +29,39 @@ func NewStopInstanceCommand() *cobra.Command {
 	}
 
 	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	return c
 }
 
 func (o *instanceOptions) stop(ctx context.Context) error {
-	cli, err := client.NewECSClient(ctx)
+	ecsCli, err := o.awsConfig.NewECSClient(ctx)
 	if err != nil {
 		return err
 	}
 
 	if o.allClusters {
-		return o.stopInClusters(ctx, cli)
+		return o.stopInClusters(ctx, ecsCli)
 	} else {
-		return o.stopInstances(ctx, cli, o.cluster)
+		return o.stopInstances(ctx, ecsCli, o.cluster)
 	}
 }
 
-func (o *instanceOptions) stopInClusters(ctx context.Context, cli *client.ECSClient) error {
-	clusters, err := cli.ListClusters(ctx)
+func (o *instanceOptions) stopInClusters(ctx context.Context, ecsCli *client.ECSClient) error {
+	clusters, err := ecsCli.ListClusters(ctx)
 	if err != nil {
 		return err
 	}
 	for _, cluster := range clusters {
-		if err = o.stopInstances(ctx, cli, cluster); err != nil {
+		if err = o.stopInstances(ctx, ecsCli, cluster); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (o *instanceOptions) stopInstances(ctx context.Context, cli *client.ECSClient, cluster string) error {
-	instanceArns, err := cli.ListContainerInstances(ctx, cluster)
+func (o *instanceOptions) stopInstances(ctx context.Context, ecsCli *client.ECSClient, cluster string) error {
+	instanceArns, err := ecsCli.ListContainerInstances(ctx, cluster)
 	if err != nil {
 		return err
 	}
@@ -69,12 +72,12 @@ func (o *instanceOptions) stopInstances(ctx context.Context, cli *client.ECSClie
 
 	printPreSummaryInstance(cluster, instanceArns)
 
-	ec2client, err := client.NewEC2Client(ctx)
+	ec2cli, err := o.awsConfig.NewEC2Client(ctx)
 	if err != nil {
 		return err
 	}
 
-	if err := ec2client.StopInstances(ctx, instanceArns); err != nil {
+	if err := ec2cli.StopInstances(ctx, instanceArns); err != nil {
 		return fmt.Errorf("failed to stop instances: %w", err)
 	}
 	fmt.Printf(" -> Successfully stopped %d instances\n", len(instanceArns))

@@ -2,10 +2,8 @@ package client
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 )
@@ -15,10 +13,9 @@ type ECSClient struct {
 }
 
 // Create a new ECSClient with default configuration
-func NewECSClient(ctx context.Context) (*ECSClient, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
+func (ac AWSConfig) NewECSClient(ctx context.Context) (*ECSClient, error) {
+	cfg, err := ac.loadConfig(ctx)
 	if err != nil {
-		fmt.Printf("unable to load SDK config, %v", err)
 		return nil, err
 	}
 

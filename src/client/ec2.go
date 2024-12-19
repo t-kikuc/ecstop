@@ -2,9 +2,7 @@ package client
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -13,10 +11,9 @@ type EC2Client struct {
 }
 
 // Create a new EC2Client with default configuration
-func NewEC2Client(ctx context.Context) (*EC2Client, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
+func (ac AWSConfig) NewEC2Client(ctx context.Context) (*EC2Client, error) {
+	cfg, err := ac.loadConfig(ctx)
 	if err != nil {
-		fmt.Printf("unable to load SDK config, %v", err)
 		return nil, err
 	}
 
