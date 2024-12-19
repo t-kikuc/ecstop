@@ -6,7 +6,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/src/client"
-	"github.com/t-kikuc/ecstop/src/ec2client"
 )
 
 type instanceOptions struct {
@@ -79,7 +78,7 @@ func (o *instanceOptions) stopInstancesInCluster(ctx context.Context, cli *clien
 
 	printPreSummaryInstance(cluster, instanceArns)
 
-	ec2client, err := ec2client.NewDefaultClient()
+	ec2client, err := client.NewEC2Client()
 	if err != nil {
 		return err
 	}

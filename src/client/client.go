@@ -1,4 +1,4 @@
-package ec2client
+package client
 
 import (
 	"context"
@@ -8,26 +8,32 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
-type EC2Client interface {
-	StopInstances(ctx context.Context, instanceIDs []string) error
-}
-
-// ec2Client is a real implementation of EC2Client
-type ec2Client struct {
+// EC2Client is a real implementation of EC2Client
+type EC2Client struct {
 	client *ec2.Client
 }
 
 // Create a new EC2 Client with default configuration
-func NewDefaultClient() (EC2Client, error) {
+func NewEC2Client() (*EC2Client, error) {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		fmt.Printf("unable to load SDK config, %v", err)
 		return nil, err
 	}
 
-	cli := &ec2Client{
+	cli := &EC2Client{
 		client: ec2.NewFromConfig(cfg),
 	}
 
 	return cli, nil
+}
+
+func (c *EC2Client) StopInstances(ctx context.Context, instanceIDs []string) error {
+	_, err := c.client.StopInstances(ctx, &ec2.StopInstancesInput{
+		InstanceIds: instanceIDs,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
