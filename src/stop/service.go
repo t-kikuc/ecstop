@@ -58,23 +58,24 @@ func (o *serviceOptions) stop(ctx context.Context) error {
 }
 
 func stopServices(ctx context.Context, cli *client.ECSClient, cluster string) error {
-	services, e := cli.DescribeServices(ctx, cluster)
-	if e != nil {
-		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, e)
+	services, err := cli.DescribeServices(ctx, cluster)
+	if err != nil {
+		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, err)
 	}
 	if len(services) == 0 {
 		fmt.Printf("No service found in cluster %s\n", cluster)
 		return nil
 	}
 
+	// We don't need to scale-in services which are already stopped.
 	runningServices := filterRunning(services)
 	printPreSummary(cluster, services, runningServices)
 
 	// Scale-in services
 	for i, s := range runningServices {
-		e := cli.ScaleinService(ctx, cluster, *s.ServiceName)
-		if e != nil {
-			return fmt.Errorf("failed to scale-in [%d]%s: %w", i+1, *s.ServiceName, e)
+		err := cli.ScaleinService(ctx, cluster, *s.ServiceName)
+		if err != nil {
+			return fmt.Errorf("failed to scale-in [%d]%s: %w", i+1, *s.ServiceName, err)
 		} else {
 			fmt.Printf(" -> successfully scaled-in [%d]%s \n", i+1, *s.ServiceName)
 		}
@@ -83,16 +84,16 @@ func stopServices(ctx context.Context, cli *client.ECSClient, cluster string) er
 	return nil
 }
 
-// filterRunning filters running services from the given services
+// filterRunning filters running services from the given services.
 func filterRunning(services []types.Service) []types.Service {
-	var runningServices []types.Service
+	var running []types.Service
 	for _, s := range services {
-		// Sometimes RunningCount>0 although DesiredCount is already 0
+		// Sometimes RunningCount>0 although DesiredCount is already 0. (e.g. while draining)
 		if s.DesiredCount > 0 || s.RunningCount > 0 {
-			runningServices = append(runningServices, s)
+			running = append(running, s)
 		}
 	}
-	return runningServices
+	return running
 }
 
 func printPreSummary(cluster string, services []types.Service, runningServices []types.Service) {

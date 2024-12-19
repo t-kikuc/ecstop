@@ -34,11 +34,11 @@ func NewStopAllCommand() *cobra.Command {
 
 func (o *allOptions) stop(ctx context.Context) error {
 	fmt.Println("[1] Start stopping ECS Services")
-	srvOpts := &serviceOptions{
+	srcOpts := &serviceOptions{
 		cluster:   o.cluster,
 		awsConfig: o.awsConfig,
 	}
-	if err := srvOpts.stop(ctx); err != nil {
+	if err := srcOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Services: %w", err)
 	}
 	fmt.Println("[1] Successfully finished stopping ECS Services")
