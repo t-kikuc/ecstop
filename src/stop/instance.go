@@ -47,15 +47,20 @@ func (o *instanceOptions) stop(ctx context.Context) error {
 		return nil
 	}
 
+	ec2Cli, err := o.awsConfig.NewEC2Client(ctx)
+	if err != nil {
+		return err
+	}
+
 	for _, cluster := range clusters {
-		if err := o.stopInstances(ctx, ecsCli, cluster); err != nil {
+		if err := stopInstances(ctx, ecsCli, ec2Cli, cluster); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (o *instanceOptions) stopInstances(ctx context.Context, ecsCli *client.ECSClient, cluster string) error {
+func stopInstances(ctx context.Context, ecsCli *client.ECSClient, ec2Cli *client.EC2Client, cluster string) error {
 	instanceArns, err := ecsCli.ListContainerInstances(ctx, cluster)
 	if err != nil {
 		return err
@@ -67,12 +72,7 @@ func (o *instanceOptions) stopInstances(ctx context.Context, ecsCli *client.ECSC
 
 	printPreSummaryInstance(cluster, instanceArns)
 
-	ec2cli, err := o.awsConfig.NewEC2Client(ctx)
-	if err != nil {
-		return err
-	}
-
-	if err := ec2cli.StopInstances(ctx, instanceArns); err != nil {
+	if err := ec2Cli.StopInstances(ctx, instanceArns); err != nil {
 		return fmt.Errorf("failed to stop instances: %w", err)
 	}
 	fmt.Printf(" -> Successfully stopped %d instances\n", len(instanceArns))
