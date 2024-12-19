@@ -6,12 +6,10 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/src/client"
-	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 type instanceOptions struct {
-	cluster     string
-	allClusters bool
+	cluster clusterOptions
 
 	awsConfig client.AWSConfig
 }
@@ -28,7 +26,7 @@ func NewStopInstanceCommand() *cobra.Command {
 		},
 	}
 
-	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	addClusterFlags(c, &o.cluster)
 	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	return c
@@ -40,20 +38,17 @@ func (o *instanceOptions) stop(ctx context.Context) error {
 		return err
 	}
 
-	if o.allClusters {
-		return o.stopInClusters(ctx, ecsCli)
-	} else {
-		return o.stopInstances(ctx, ecsCli, o.cluster)
-	}
-}
-
-func (o *instanceOptions) stopInClusters(ctx context.Context, ecsCli *client.ECSClient) error {
-	clusters, err := ecsCli.ListClusters(ctx)
+	clusters, err := o.cluster.DecideClusters(ctx, ecsCli)
 	if err != nil {
 		return err
 	}
+	if len(clusters) == 0 {
+		fmt.Println("No cluster found")
+		return nil
+	}
+
 	for _, cluster := range clusters {
-		if err = o.stopInstances(ctx, ecsCli, cluster); err != nil {
+		if err := o.stopInstances(ctx, ecsCli, cluster); err != nil {
 			return err
 		}
 	}

@@ -9,12 +9,10 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/t-kikuc/ecstop/src/client"
-	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 type taskOptions struct {
-	cluster     string
-	allClusters bool
+	cluster clusterOptions
 
 	group       string
 	groupPrefix string
@@ -41,7 +39,7 @@ func NewStopTaskCommand() *cobra.Command {
 		flag_standalone  = "standalone"
 	)
 
-	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	addClusterFlags(c, &o.cluster)
 	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	// Group
@@ -61,18 +59,15 @@ func (o *taskOptions) stop(ctx context.Context) error {
 		return err
 	}
 
-	if o.allClusters {
-		return o.stopInClusters(ctx, cli)
-	} else {
-		return o.stopTasks(ctx, cli, o.cluster)
-	}
-}
-
-func (o *taskOptions) stopInClusters(ctx context.Context, cli *client.ECSClient) error {
-	clusters, err := cli.ListClusters(ctx)
+	clusters, err := o.cluster.DecideClusters(ctx, cli)
 	if err != nil {
-		return err
+		return nil
 	}
+	if len(clusters) == 0 {
+		fmt.Println("No cluster found")
+		return nil
+	}
+
 	for _, cluster := range clusters {
 		if err = o.stopTasks(ctx, cli, cluster); err != nil {
 			return err

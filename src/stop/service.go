@@ -7,13 +7,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/src/client"
-	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 // serviceOptions is the options for scaling-in ECS services
 type serviceOptions struct {
-	cluster     string
-	allClusters bool
+	cluster clusterOptions
 
 	awsConfig client.AWSConfig
 }
@@ -30,7 +28,7 @@ func NewStopServiceCommand() *cobra.Command {
 		},
 	}
 
-	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	addClusterFlags(c, &o.cluster)
 	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	return c
@@ -42,27 +40,24 @@ func (o *serviceOptions) stop(ctx context.Context) error {
 		return err
 	}
 
-	if o.allClusters {
-		return scaleinServicesInClusters(ctx, cli)
-	} else {
-		return scaleinServicesInCluster(ctx, cli, o.cluster)
-	}
-}
-
-func scaleinServicesInClusters(ctx context.Context, cli *client.ECSClient) error {
-	clusters, err := cli.ListClusters(ctx)
+	clusters, err := o.cluster.DecideClusters(ctx, cli)
 	if err != nil {
-		return fmt.Errorf("failed to list clusters: %w", err)
+		return err
 	}
+	if len(clusters) == 0 {
+		fmt.Println("No cluster found")
+		return nil
+	}
+
 	for _, cluster := range clusters {
-		if err = scaleinServicesInCluster(ctx, cli, cluster); err != nil {
+		if err = stopServices(ctx, cli, cluster); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func scaleinServicesInCluster(ctx context.Context, cli *client.ECSClient, cluster string) error {
+func stopServices(ctx context.Context, cli *client.ECSClient, cluster string) error {
 	services, e := cli.DescribeServices(ctx, cluster)
 	if e != nil {
 		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, e)

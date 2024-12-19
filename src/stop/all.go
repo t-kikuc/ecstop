@@ -6,12 +6,10 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/src/client"
-	"github.com/t-kikuc/ecstop/src/flag"
 )
 
 type allOptions struct {
-	cluster     string
-	allClusters bool
+	cluster clusterOptions
 
 	awsConfig client.AWSConfig
 }
@@ -28,7 +26,7 @@ func NewStopAllCommand() *cobra.Command {
 		},
 	}
 
-	flag.AddClusterFlags(c, &o.cluster, &o.allClusters)
+	addClusterFlags(c, &o.cluster)
 	client.AddAWSConfigFlags(c, &o.awsConfig)
 
 	return c
@@ -37,9 +35,8 @@ func NewStopAllCommand() *cobra.Command {
 func (o *allOptions) stop(ctx context.Context) error {
 	fmt.Println("[1] Start stopping ECS Services")
 	srvOpts := &serviceOptions{
-		cluster:     o.cluster,
-		allClusters: o.allClusters,
-		awsConfig:   o.awsConfig,
+		cluster:   o.cluster,
+		awsConfig: o.awsConfig,
 	}
 	if err := srvOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Services: %w", err)
@@ -48,10 +45,9 @@ func (o *allOptions) stop(ctx context.Context) error {
 
 	fmt.Println("[2] Start stopping ECS Standalone Tasks")
 	taskOpts := &taskOptions{
-		cluster:     o.cluster,
-		allClusters: o.allClusters,
-		standalone:  true,
-		awsConfig:   o.awsConfig,
+		cluster:    o.cluster,
+		standalone: true,
+		awsConfig:  o.awsConfig,
 	}
 	if err := taskOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Standalone Tasks: %w", err)
@@ -60,9 +56,8 @@ func (o *allOptions) stop(ctx context.Context) error {
 
 	fmt.Println("[3] Start stopping ECS Container Instances")
 	instOpts := &instanceOptions{
-		cluster:     o.cluster,
-		allClusters: o.allClusters,
-		awsConfig:   o.awsConfig,
+		cluster:   o.cluster,
+		awsConfig: o.awsConfig,
 	}
 	if err := instOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Container Instances: %w", err)
