@@ -63,7 +63,7 @@ func stopServices(ctx context.Context, cli *client.ECSClient, cluster string) er
 		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, err)
 	}
 	if len(services) == 0 {
-		fmt.Printf("No service found in cluster %s\n", cluster)
+		fmt.Printf("[%s] No service found in cluster\n", cluster)
 		return nil
 	}
 
@@ -104,7 +104,7 @@ func printPreSummary(cluster string, services []types.Service, runningServices [
 	if running > 0 {
 		fmt.Println("Running Services:")
 		for i, s := range runningServices {
-			fmt.Printf(" [%d]  %s:: running %d, desired: %d\n", i+1, *s.ServiceName, s.RunningCount, s.DesiredCount)
+			fmt.Printf(" [%d] %s) running: %d, desired: %d\n", i+1, *s.ServiceName, s.RunningCount, s.DesiredCount)
 		}
 	} else {
 		fmt.Println(" -> No service to scale-in")
