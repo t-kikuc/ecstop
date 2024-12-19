@@ -17,10 +17,10 @@ func NewStopAllCommand() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "all",
-		Short: "Stop ECS Services, Standalone Tasks", // and Container Instances",
+		Short: "Stop ECS Services, Standalone Tasks, and Container Instances",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return o.stopAll(context.Background())
+			return o.stop(context.Background())
 		},
 	}
 
@@ -38,7 +38,7 @@ func NewStopAllCommand() *cobra.Command {
 	return c
 }
 
-func (o *allOptions) stopAll(ctx context.Context) error {
+func (o *allOptions) stop(ctx context.Context) error {
 	fmt.Println("[1] Start stopping ECS Services")
 	srvOpts := &serviceOptions{
 		cluster:     o.cluster,

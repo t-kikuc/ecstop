@@ -43,15 +43,15 @@ func NewStopTaskCommand() *cobra.Command {
 
 	// Cluster
 	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Cluster name/arn to scale-in tasks")
-	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Scale-in tasks of all clusters in the region")
+	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Stop tasks of all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
 
 	// Group
-	c.Flags().StringVar(&o.group, flag_group, "", "Group name to scale-in tasks")
-	c.Flags().StringVar(&o.groupPrefix, flag_groupPrefix, "", "Group name prefix to scale-in tasks")
-	c.Flags().BoolVar(&o.standalone, flag_standalone, false, "Scale-in standalone tasks")
+	c.Flags().StringVar(&o.group, flag_group, "", "Group name to stop tasks")
+	c.Flags().StringVar(&o.groupPrefix, flag_groupPrefix, "", "Group name prefix to stop tasks")
+	c.Flags().BoolVar(&o.standalone, flag_standalone, false, "Stop standalone tasks, whose group prefix is not 'service:'")
 
 	c.MarkFlagsOneRequired(flag_group, flag_groupPrefix, flag_standalone)
 	c.MarkFlagsMutuallyExclusive(flag_group, flag_groupPrefix, flag_standalone)

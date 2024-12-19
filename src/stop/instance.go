@@ -31,7 +31,7 @@ func NewStopInstanceCommand() *cobra.Command {
 	)
 
 	// Cluster
-	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Cluster name/arn to stop instances")
+	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Cluster name or ARN to stop instances")
 	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Stop instances of all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
