@@ -8,13 +8,19 @@ import (
 )
 
 func main() {
+	if err := executeCmd(); err != nil {
+		os.Exit(1)
+	}
+}
+
+func executeCmd() error {
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd := &cobra.Command{
 		Use:   "ecstop",
 		Short: "Stop ECS resources easily",
 		Long:  ``,
 	}
-
+	rootCmd.PersistentFlags().StringP("region", "r", "", "AWS region")
 	rootCmd.AddCommand(
 		stop.NewStopServiceCommand(),
 		stop.NewStopTaskCommand(),
@@ -22,8 +28,5 @@ func main() {
 		stop.NewStopAllCommand(),
 	)
 
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
+	return rootCmd.Execute()
 }
