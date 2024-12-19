@@ -15,8 +15,8 @@ type ECSClient struct {
 }
 
 // Create a new ECSClient with default configuration
-func NewECSClient() (*ECSClient, error) {
-	cfg, err := config.LoadDefaultConfig(context.Background())
+func NewECSClient(ctx context.Context) (*ECSClient, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		fmt.Printf("unable to load SDK config, %v", err)
 		return nil, err

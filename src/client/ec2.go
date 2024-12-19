@@ -13,8 +13,8 @@ type EC2Client struct {
 }
 
 // Create a new EC2Client with default configuration
-func NewEC2Client() (*EC2Client, error) {
-	cfg, err := config.LoadDefaultConfig(context.Background())
+func NewEC2Client(ctx context.Context) (*EC2Client, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		fmt.Printf("unable to load SDK config, %v", err)
 		return nil, err

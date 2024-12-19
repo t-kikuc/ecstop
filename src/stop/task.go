@@ -60,7 +60,7 @@ func NewStopTaskCommand() *cobra.Command {
 }
 
 func (o *taskOptions) stop(ctx context.Context) error {
-	cli, err := client.NewECSClient()
+	cli, err := client.NewECSClient(ctx)
 	if err != nil {
 		return err
 	}

@@ -42,7 +42,7 @@ func NewStopServiceCommand() *cobra.Command {
 }
 
 func (o *serviceOptions) stop(ctx context.Context) error {
-	cli, err := client.NewECSClient()
+	cli, err := client.NewECSClient(ctx)
 	if err != nil {
 		return err
 	}

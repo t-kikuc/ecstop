@@ -41,7 +41,7 @@ func NewStopInstanceCommand() *cobra.Command {
 }
 
 func (o *instanceOptions) stop(ctx context.Context) error {
-	cli, err := client.NewECSClient()
+	cli, err := client.NewECSClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (o *instanceOptions) stopInstances(ctx context.Context, cli *client.ECSClie
 
 	printPreSummaryInstance(cluster, instanceArns)
 
-	ec2client, err := client.NewEC2Client()
+	ec2client, err := client.NewEC2Client(ctx)
 	if err != nil {
 		return err
 	}
