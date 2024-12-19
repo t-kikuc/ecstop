@@ -8,12 +8,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
-// EC2Client is a real implementation of EC2Client
 type EC2Client struct {
 	client *ec2.Client
 }
 
-// Create a new EC2 Client with default configuration
+// Create a new EC2Client with default configuration
 func NewEC2Client() (*EC2Client, error) {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {

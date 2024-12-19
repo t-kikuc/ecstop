@@ -14,7 +14,7 @@ type ECSClient struct {
 	client *ecs.Client
 }
 
-// Create a new ECS Client with default configuration
+// Create a new ECSClient with default configuration
 func NewECSClient() (*ECSClient, error) {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
