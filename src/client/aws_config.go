@@ -9,8 +9,8 @@ import (
 )
 
 type AWSConfig struct {
-	Profile string
-	Region  string
+	profile string
+	region  string
 }
 
 func AddAWSConfigFlags(c *cobra.Command, configP *AWSConfig) {
@@ -19,8 +19,8 @@ func AddAWSConfigFlags(c *cobra.Command, configP *AWSConfig) {
 		flag_region  = "region"
 	)
 
-	c.Flags().StringVarP(&configP.Profile, flag_profile, "p", "", "AWS profile")
-	c.Flags().StringVarP(&configP.Region, flag_region, "r", "", "AWS region")
+	c.Flags().StringVarP(&configP.profile, flag_profile, "p", "", "AWS profile")
+	c.Flags().StringVarP(&configP.region, flag_region, "r", "", "AWS region")
 }
 
 func (ac AWSConfig) loadConfig(ctx context.Context) (aws.Config, error) {
@@ -29,8 +29,8 @@ func (ac AWSConfig) loadConfig(ctx context.Context) (aws.Config, error) {
 		err error
 	)
 
-	if ac.Profile != "" {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(ac.Profile))
+	if ac.profile != "" {
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(ac.profile))
 	} else {
 		cfg, err = config.LoadDefaultConfig(ctx)
 	}
@@ -39,8 +39,8 @@ func (ac AWSConfig) loadConfig(ctx context.Context) (aws.Config, error) {
 		return cfg, err
 	}
 
-	if ac.Region != "" {
-		cfg.Region = ac.Region
+	if ac.region != "" {
+		cfg.Region = ac.region
 	}
 	return cfg, nil
 }

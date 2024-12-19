@@ -10,7 +10,7 @@ func AddClusterFlags(c *cobra.Command, clusterP *string, allClusterP *bool) {
 	)
 
 	c.Flags().StringVarP(clusterP, flag_cluster, "c", "", "Name or ARN of the cluster")
-	c.Flags().BoolVarP(allClusterP, flag_allClusters, "a", false, "Stop all clusters in the region")
+	c.Flags().BoolVarP(allClusterP, flag_allClusters, "a", false, "Stop in all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
