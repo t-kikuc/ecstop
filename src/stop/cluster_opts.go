@@ -31,13 +31,10 @@ func (co clusterOptions) DecideClusters(ctx context.Context, cli *client.ECSClie
 		return []string{co.cluster}, nil
 	}
 
-	// Since at least on of `--cluster` or `--all-clusters` is required, we can assume that `--all-clusters` is true
+	// Since at least one of `--cluster` or `--all-clusters` is required, we can assume that `--all-clusters` is true
 	clusters, err := cli.ListClusters(ctx)
 	if err != nil {
 		return nil, err
-	}
-	if len(clusters) == 0 {
-		return nil, nil
 	}
 	return clusters, nil
 }
