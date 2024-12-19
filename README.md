@@ -1,9 +1,11 @@
 # ecstop:  ECS+Stop
 
-ecstop is a CLI tool to quickly clean your running ECS resources to save costs.
+ecstop is a CLI tool to instantly stop your running resources of Amazon ECS to save costs.
 
-Pronounce: ee-c-s-top / ee-c-stop
+This tool focuses on stopping **ECS Services, Tasks, and Container Instances** because they cost higher.
+On the other hand, it does NOT clean Task Definitions or ECR Images, which are free or cheaper.
 
+Pronounce: _ee-c-stop_
 
 <!-- 
 # Usage Pattern
@@ -59,7 +61,7 @@ Flags:
 
 ### `instances`
 
-`ecstop instances` stops container instances.
+`ecstop instances` stops container instances. (not terminate)
 
 ```
 Usage:
@@ -86,3 +88,11 @@ Flags:
 ```
 
 - Only one of `--all-clusters` or `--cluster` is required.
+
+For example, `ecstop all --cluster xxx` is equal to: 
+
+```sh
+ecstop services --cluster xxx
+ecstop tasks --cluster xxx --standalone
+ecstop instances --cluster xxx
+```
