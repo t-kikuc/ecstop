@@ -27,11 +27,21 @@ func (ac AWSConfig) NewECSClient(ctx context.Context) (*ECSClient, error) {
 }
 
 func (c *ECSClient) ListClusters(ctx context.Context) (clusterArns []string, err error) {
-	out, err := c.client.ListClusters(ctx, &ecs.ListClustersInput{}) // TODO: pagination (up to 100 clusters by default)
-	if err != nil {
-		return nil, err
+	in := &ecs.ListClustersInput{}
+	for {
+		out, err := c.client.ListClusters(ctx, in)
+		if err != nil {
+			return nil, err
+		}
+		clusterArns = append(clusterArns, out.ClusterArns...)
+
+		if out.NextToken == nil {
+			break
+		}
+		in.NextToken = out.NextToken
 	}
-	return out.ClusterArns, nil
+
+	return clusterArns, nil
 }
 
 func (c *ECSClient) listServices(ctx context.Context, cluster string) (seviceArns []string, err error) {
