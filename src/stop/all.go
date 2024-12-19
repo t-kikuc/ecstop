@@ -29,8 +29,8 @@ func NewStopAllCommand() *cobra.Command {
 		flag_allClusters = "all-clusters"
 	)
 
-	c.Flags().StringVar(&o.cluster, flag_cluster, "", "Name or ARN of the cluster to stop resources")
-	c.Flags().BoolVar(&o.allClusters, flag_allClusters, false, "Stop resources of all clusters in the region")
+	c.Flags().StringVarP(&o.cluster, flag_cluster, "c", "", "Name or ARN of the cluster to stop resources")
+	c.Flags().BoolVarP(&o.allClusters, flag_allClusters, "a", false, "Stop resources of all clusters in the region")
 
 	c.MarkFlagsOneRequired(flag_cluster, flag_allClusters)
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
