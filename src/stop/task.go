@@ -2,7 +2,7 @@ package stop
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -64,7 +64,7 @@ func (o *taskOptions) stop(ctx context.Context) error {
 		return nil
 	}
 	if len(clusters) == 0 {
-		fmt.Println("No cluster found")
+		log.Println("No cluster found")
 		return nil
 	}
 
@@ -82,7 +82,7 @@ func (o *taskOptions) stopTasks(ctx context.Context, cli *client.ECSClient, clus
 		return err
 	}
 	if len(tasks) == 0 {
-		fmt.Printf("[%s] No tasks found in cluster\n", cluster)
+		log.Printf("[%s] No tasks found in cluster\n", cluster)
 		return nil
 	}
 
@@ -93,7 +93,7 @@ func (o *taskOptions) stopTasks(ctx context.Context, cli *client.ECSClient, clus
 		if err = cli.StopTask(ctx, cluster, *task.TaskArn); err != nil {
 			return err
 		}
-		fmt.Printf(" -> Successfully stopped Task: %s\n", *task.TaskArn)
+		log.Printf(" -> Successfully stopped Task: %s\n", *task.TaskArn)
 	}
 	return nil
 }
@@ -122,13 +122,13 @@ func (o *taskOptions) filterByGroup(tasks []types.Task) []types.Task {
 }
 
 func printPreSummaryTask(cluster string, all, matched []types.Task) {
-	fmt.Printf("[%s] All Tasks: %d, Tasks to stop: %d\n", cluster, len(all), len(matched))
+	log.Printf("[%s] All Tasks: %d, Tasks to stop: %d\n", cluster, len(all), len(matched))
 	if len(matched) > 0 {
-		fmt.Println("Tasks to stop:")
+		log.Println("Tasks to stop:")
 		for i, task := range matched {
-			fmt.Printf(" [%d] Group: %s, Arn: %s\n", i+1, *task.Group, *task.TaskArn)
+			log.Printf(" [%d] Group: %s, Arn: %s\n", i+1, *task.Group, *task.TaskArn)
 		}
 	} else {
-		fmt.Println(" -> No tasks to stop")
+		log.Println(" -> No tasks to stop")
 	}
 }

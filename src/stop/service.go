@@ -3,6 +3,7 @@ package stop
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/spf13/cobra"
@@ -45,7 +46,7 @@ func (o *serviceOptions) stop(ctx context.Context) error {
 		return err
 	}
 	if len(clusters) == 0 {
-		fmt.Println("No cluster found")
+		log.Println("No cluster found")
 		return nil
 	}
 
@@ -63,7 +64,7 @@ func stopServices(ctx context.Context, cli *client.ECSClient, cluster string) er
 		return fmt.Errorf("failed to list services of cluster %s: %w", cluster, err)
 	}
 	if len(services) == 0 {
-		fmt.Printf("[%s] No service found in cluster\n", cluster)
+		log.Printf("[%s] No service found in cluster\n", cluster)
 		return nil
 	}
 
@@ -77,7 +78,7 @@ func stopServices(ctx context.Context, cli *client.ECSClient, cluster string) er
 		if err != nil {
 			return fmt.Errorf("failed to scale-in [%d]%s: %w", i+1, *s.ServiceName, err)
 		} else {
-			fmt.Printf(" -> successfully scaled-in [%d]%s \n", i+1, *s.ServiceName)
+			log.Printf(" -> successfully scaled-in [%d]%s \n", i+1, *s.ServiceName)
 		}
 	}
 
@@ -100,13 +101,13 @@ func printPreSummary(cluster string, services []types.Service, runningServices [
 	total := len(services)
 	running := len(runningServices)
 
-	fmt.Printf("[%s] Total Services: %d, Running Services: %d\n", cluster, total, running)
+	log.Printf("[%s] Total Services: %d, Running Services: %d\n", cluster, total, running)
 	if running > 0 {
-		fmt.Println("Running Services:")
+		log.Println("Running Services:")
 		for i, s := range runningServices {
-			fmt.Printf(" [%d] %s) running: %d, desired: %d\n", i+1, *s.ServiceName, s.RunningCount, s.DesiredCount)
+			log.Printf(" [%d] %s) running: %d, desired: %d\n", i+1, *s.ServiceName, s.RunningCount, s.DesiredCount)
 		}
 	} else {
-		fmt.Println(" -> No service to scale-in")
+		log.Println(" -> No service to scale-in")
 	}
 }

@@ -3,6 +3,7 @@ package stop
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/src/client"
@@ -33,7 +34,7 @@ func NewStopAllCommand() *cobra.Command {
 }
 
 func (o *allOptions) stop(ctx context.Context) error {
-	fmt.Println("[1] Start stopping ECS Services")
+	log.Println("[1] Start stopping ECS Services")
 	srcOpts := &serviceOptions{
 		cluster:   o.cluster,
 		awsConfig: o.awsConfig,
@@ -41,9 +42,9 @@ func (o *allOptions) stop(ctx context.Context) error {
 	if err := srcOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Services: %w", err)
 	}
-	fmt.Println("[1] Successfully finished stopping ECS Services")
+	log.Println("[1] Successfully finished stopping ECS Services")
 
-	fmt.Println("[2] Start stopping ECS Standalone Tasks")
+	log.Println("[2] Start stopping ECS Standalone Tasks")
 	taskOpts := &taskOptions{
 		cluster:    o.cluster,
 		standalone: true,
@@ -52,9 +53,9 @@ func (o *allOptions) stop(ctx context.Context) error {
 	if err := taskOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Standalone Tasks: %w", err)
 	}
-	fmt.Println("[2] Successfully finished stopping ECS Standalone Tasks")
+	log.Println("[2] Successfully finished stopping ECS Standalone Tasks")
 
-	fmt.Println("[3] Start stopping ECS Container Instances")
+	log.Println("[3] Start stopping ECS Container Instances")
 	instOpts := &instanceOptions{
 		cluster:   o.cluster,
 		awsConfig: o.awsConfig,
@@ -62,7 +63,7 @@ func (o *allOptions) stop(ctx context.Context) error {
 	if err := instOpts.stop(ctx); err != nil {
 		return fmt.Errorf("failed while stopping ECS Container Instances: %w", err)
 	}
-	fmt.Println("[3] Successfully finished stopping ECS Container Instances")
+	log.Println("[3] Successfully finished stopping ECS Container Instances")
 
 	return nil
 }
