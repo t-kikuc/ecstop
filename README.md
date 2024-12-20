@@ -15,6 +15,10 @@ Pronounce: _ee-c-stop_
 3. Scheduled in AWS
 -->
 
+## Installation
+
+TBA
+
 ## Commands
 
 - [`services`](#services): Scale-in Services
@@ -68,7 +72,7 @@ Flags:
 `ecstop instances` stops container instances. (not terminate)
 
 Flags:
-```
+```console
   -a, --all-clusters     Stop instances in all clusters in the region
   -c, --cluster string   Name or ARN of the cluster to stop instances
 ```
@@ -79,11 +83,8 @@ Flags:
 
 `ecstop all` stops services, standalone tasks, and container instances.
 
-```
-Usage:
-  ecstop all [flags]
-
 Flags:
+```console
   -a, --all-clusters     Stop resources in all clusters in the region
   -c, --cluster string   Name or ARN of the cluster to stop resources
 ```
@@ -92,7 +93,7 @@ Flags:
 
 For example, `ecstop all --cluster xxx` is equal to: 
 
-```sh
+```console
 ecstop services --cluster xxx
 ecstop tasks --cluster xxx --standalone
 ecstop instances --cluster xxx
@@ -116,4 +117,3 @@ ecs:
 ec2:
 - Write
   - `StopInstances`
-
