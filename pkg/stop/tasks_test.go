@@ -59,19 +59,20 @@ func TestFilterByGroup_match(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
+		title       string
 		group       string
 		taskGroup   string
 		wantMatched bool
 	}{
-		{"group", "group", true},
-		{"group", "group1", false},
-		{"group", "Group", false},
-		{"group", "", false},
+		{"complete match", "group", "group", true},
+		{"prefix match", "group", "group1", false},
+		{"different case", "group", "Group", false},
+		{"empty", "group", "", false},
 	}
 
 	for _, tc := range testcases {
 		tc := tc
-		t.Run("", func(t *testing.T) {
+		t.Run(tc.title, func(t *testing.T) {
 			t.Parallel()
 			o := &taskOptions{group: tc.group}
 			filtered := o.filterByGroup([]types.Task{{Group: &tc.taskGroup}})
@@ -84,15 +85,16 @@ func TestFilterByGroup_prefix(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
+		title       string
 		prefix      string
 		taskGroup   string
 		wantMatched bool
 	}{
-		{"group", "group", true},
-		{"group", "group1", true},
-		{"group", "Group", false},
-		{"group", "_group", false},
-		{"group", "", false},
+		{"complete match", "group", "group", true},
+		{"prefix match", "group", "group1", true},
+		{"different case", "group", "Group", false},
+		{"suffix match", "group", "_group", false},
+		{"empty", "group", "", false},
 	}
 
 	for _, tc := range testcases {
@@ -110,18 +112,19 @@ func TestFilterByGroup_standalone(t *testing.T) {
 	t.Parallel()
 
 	testcases := []struct {
+		title       string
 		taskGroup   string
 		wantMatched bool
 	}{
-		{"service:", false},
-		{"xxx:service:", true},
-		{"group", true},
-		{"", true},
+		{"service task", "service:", false},
+		{"suffix is service task", "xxx:service:", true},
+		{"not service task", "group", true},
+		{"empty", "", true},
 	}
 
 	for _, tc := range testcases {
 		tc := tc
-		t.Run("", func(t *testing.T) {
+		t.Run(tc.title, func(t *testing.T) {
 			t.Parallel()
 			o := &taskOptions{standalone: true}
 			filtered := o.filterByGroup([]types.Task{{Group: &tc.taskGroup}})
