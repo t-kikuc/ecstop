@@ -96,3 +96,20 @@ ecstop services --cluster xxx
 ecstop tasks --cluster xxx --standalone
 ecstop instances --cluster xxx
 ```
+
+## Required IAM Permissios
+
+ecs:
+- `ListClusters`
+- `ListServices`
+- `ListTasks`
+- `ListContainerInstances`
+- `DescribeServices`
+- `DescribeTasks`
+- `UpdateService`
+- `StopTask`
+- `DescribeContainerInstances`
+
+ec2:
+- `StopInstances`
+
