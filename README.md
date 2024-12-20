@@ -42,42 +42,38 @@ $ ecstop completion --help
 - [`instances`](#instances): Stop Container Instances
 - [`all`](#all): Stop the above 3 resources
 
-You can execute the all commands with the following AWS options:
+### Common Options
+
+You can execute the above commands with the following options:
 ```console
-  -p, --profile string   AWS profile
-  -r, --region string    AWS region
+  -p, --profile string   AWS profile (optional)
+  -r, --region string    AWS region (optional)
+
+  -a, --all-clusters     Stop resources in all clusters in the region
+  -c, --cluster string   Name or ARN of the cluster to stop resources
 ```
+
+Only one of `--all-clusters` or `--cluster` is required.
 
 ### `services`
 
-`ecstop services` updates `desiredCount` of ECS services to 0.
-
-Flags:
-```console
-  -a, --all-clusters     Stop services in all clusters in the region
-  -c, --cluster string   Name or ARN of the cluster to stop services
-```
-  - Only one of `--all-clusters` or `--cluster` is required.
+It updates `desiredCount` of ECS services to 0.
 
 ### `tasks`
 
-`ecstop tasks` stops ECS tasks.
+It stops ECS tasks.
 
 This command is mainly used for standalone tasks, which are not controlled by ECS Services.
 Even if you stop tasks of an ECS Service, the Service will start new tasks.
 
 Flags:
 ```console
-  -a, --all-clusters          Stop tasks in all clusters in the region
-  -c, --cluster string        Name or ARN of the cluster to stop tasks
-
-      --group string          Group name to stop tasks
-      --group-prefix string   Group name prefix to stop tasks
-      --standalone            Stop standalone tasks, whose group prefix is not 'service:'
+  --group string          Group name to stop tasks
+  --group-prefix string   Group name prefix to stop tasks
+  --standalone            Stop standalone tasks, whose group prefix is not 'service:'
 ```
 
-- Only one of `--all-clusters` or `--cluster` is required.
-- Only one of `--group`, `--group-prefix`, or `--standalone` is required.
+Only one of `--group`, `--group-prefix`, or `--standalone` is required.
   - ecstop stops all tasks whose `group` matches the condition.
   - `--standalone` stops tasks whose `group`'s prefix is NOT `service:`.
 
@@ -85,27 +81,11 @@ Flags:
 
 ### `instances`
 
-`ecstop instances` stops container instances. (not terminate)
-
-Flags:
-```console
-  -a, --all-clusters     Stop instances in all clusters in the region
-  -c, --cluster string   Name or ARN of the cluster to stop instances
-```
-
-- Only one of `--all-clusters` or `--cluster` is required.
+It stops container instances. (not terminate)
 
 ### `all`
 
-`ecstop all` stops services, standalone tasks, and container instances.
-
-Flags:
-```console
-  -a, --all-clusters     Stop resources in all clusters in the region
-  -c, --cluster string   Name or ARN of the cluster to stop resources
-```
-
-- Only one of `--all-clusters` or `--cluster` is required.
+It stops services, standalone tasks, and container instances.
 
 For example, `ecstop all --cluster xxx` is equal to: 
 
