@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/t-kikuc/ecstop/src/stop"
+	"github.com/t-kikuc/ecstop/pkg/stop"
 )
 
 func main() {

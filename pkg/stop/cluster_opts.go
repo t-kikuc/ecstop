@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
-	"github.com/t-kikuc/ecstop/src/client"
+	"github.com/t-kikuc/ecstop/pkg/client"
 )
 
 type clusterOptions struct {
