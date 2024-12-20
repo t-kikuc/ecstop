@@ -50,3 +50,4 @@ brews:
       owner: t-kikuc
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    directory: Formula
