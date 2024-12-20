@@ -1,8 +1,8 @@
 .PHONY: run
 run: 
-	@echo  [${ARGS}]
-	go run src/main.go ${ARGS}
+	go run cmd/main.go ${ARGS}
 
 .PNONY: test
 test:
-	go test -v ./src/...
+	go test -v ./cmd/...
+	go test -v ./pkg/...
