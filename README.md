@@ -22,36 +22,38 @@ Pronounce: _ee-c-stop_
 - [`instances`](#instances): Stop Container Instances
 - [`all`](#all): Stop the above 3 resources
 
+You can execute the all commands with the following AWS options:
+```console
+  -p, --profile string   AWS profile
+  -r, --region string    AWS region
+```
+
 ### `services`
 
 `ecstop services` updates `desiredCount` of ECS services to 0.
 
-```
-Usage:
-  ecstop services [flags]
-
 Flags:
-      --all-clusters     Scale-in services of all clusters in the region
-      --cluster string   Name or ARN of the cluster to scale-in services
+```console
+  -a, --all-clusters     Stop services in all clusters in the region
+  -c, --cluster string   Name or ARN of the cluster to stop services
 ```
-
-- Only one of `--all-clusters` or `--cluster` is required.
-
+  - Only one of `--all-clusters` or `--cluster` is required.
 
 ### `tasks`
 
 `ecstop tasks` stops ECS tasks.
 
-```
-Usage:
-  ecstop tasks [flags]
+This command is mainly used for standalone tasks, which are not controlled by ECS Services.
+Even if you stop tasks of an ECS Service, the Service will start new tasks.
 
 Flags:
-      --all-clusters          Scale-in tasks of all clusters in the region
-      --cluster string        Cluster name/arn to scale-in tasks
-      --group string          Group name to scale-in tasks
-      --group-prefix string   Group name prefix to scale-in tasks
-      --standalone            Scale-in standalone tasks
+```
+  -a, --all-clusters          Stop tasks in all clusters in the region
+  -c, --cluster string        Name or ARN of the cluster to stop tasks
+
+      --group string          Group name to stop tasks
+      --group-prefix string   Group name prefix to stop tasks
+      --standalone            Stop standalone tasks, whose group prefix is not 'service:'
 ```
 
 - Only one of `--all-clusters` or `--cluster` is required.
@@ -59,17 +61,16 @@ Flags:
   - ecstop stops all tasks whose `group` matches the condition.
   - `--standalone` stops tasks whose `group`'s prefix is NOT `service:`.
 
+
+
 ### `instances`
 
 `ecstop instances` stops container instances. (not terminate)
 
-```
-Usage:
-  ecstop instances [flags]
-
 Flags:
-      --all-clusters     Stop instances of all clusters in the region
-      --cluster string   Cluster name/arn to stop instances
+```
+  -a, --all-clusters     Stop instances in all clusters in the region
+  -c, --cluster string   Name or ARN of the cluster to stop instances
 ```
 
 - Only one of `--all-clusters` or `--cluster` is required.
@@ -83,8 +84,8 @@ Usage:
   ecstop all [flags]
 
 Flags:
-      --all-clusters     Stop resources of all clusters in the region
-      --cluster string   Name or ARN of the cluster to stop resources
+  -a, --all-clusters     Stop resources in all clusters in the region
+  -c, --cluster string   Name or ARN of the cluster to stop resources
 ```
 
 - Only one of `--all-clusters` or `--cluster` is required.
@@ -100,16 +101,19 @@ ecstop instances --cluster xxx
 ## Required IAM Permissios
 
 ecs:
-- `ListClusters`
-- `ListServices`
-- `ListTasks`
-- `ListContainerInstances`
-- `DescribeServices`
-- `DescribeTasks`
-- `UpdateService`
-- `StopTask`
-- `DescribeContainerInstances`
+- Read
+  - `ListClusters`
+  - `ListServices`
+  - `ListTasks`
+  - `ListContainerInstances`
+  - `DescribeServices`
+  - `DescribeTasks`
+- Write
+  - `UpdateService`
+  - `StopTask`
+  - `DescribeContainerInstances`
 
 ec2:
-- `StopInstances`
+- Write
+  - `StopInstances`
 
