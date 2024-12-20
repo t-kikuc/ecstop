@@ -21,6 +21,20 @@ Pronounce: _ee-c-stop_
 $ brew install t-kikuc/tap/ecstop
 ```
 
+## Auto Completion
+
+You can enable the autocompletion by `ecstop completion`.
+
+Example:
+```
+$ source <(ecstop completion zsh)
+```
+
+For details, run:
+```
+$ ecstop completion --help    
+```
+
 ## Commands
 
 - [`services`](#services): Scale-in Services
