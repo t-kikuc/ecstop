@@ -51,7 +51,7 @@ This command is mainly used for standalone tasks, which are not controlled by EC
 Even if you stop tasks of an ECS Service, the Service will start new tasks.
 
 Flags:
-```
+```console
   -a, --all-clusters          Stop tasks in all clusters in the region
   -c, --cluster string        Name or ARN of the cluster to stop tasks
 
