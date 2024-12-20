@@ -26,7 +26,7 @@ func NewStopTaskCommand() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "tasks",
-		Short: "Stop ECS Tasks",
+		Short: "'tasks' stops ECS Tasks",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.stop(context.Background())

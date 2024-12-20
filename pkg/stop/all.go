@@ -20,7 +20,7 @@ func NewStopAllCommand() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "all",
-		Short: "Stop ECS Services, Standalone Tasks, and Container Instances",
+		Short: "'all' stops ECS Services, Standalone Tasks, and Container Instances",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.stop(context.Background())
