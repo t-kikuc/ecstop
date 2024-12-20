@@ -17,7 +17,9 @@ Pronounce: _ee-c-stop_
 
 ## Installation
 
-TBA
+```console
+$ brew install t-kikuc/tap/ecstop
+```
 
 ## Commands
 
