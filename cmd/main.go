@@ -20,7 +20,7 @@ func executeCmd() error {
 		Short: "ecstop stops ECS resources instantly",
 		Long:  ``,
 	}
-	rootCmd.PersistentFlags().StringP("region", "r", "", "AWS region")
+
 	rootCmd.AddCommand(
 		stop.NewStopServiceCommand(),
 		stop.NewStopTaskCommand(),
