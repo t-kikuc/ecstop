@@ -22,7 +22,7 @@ func NewStopServiceCommand() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "services",
-		Short: "'services' Scale-ins ECS Services by updating desiredCount to 0",
+		Short: "'services' scale-ins ECS Services by updating desiredCount to 0",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.stop(context.Background())
