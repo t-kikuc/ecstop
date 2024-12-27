@@ -122,13 +122,13 @@ func (o *taskOptions) filterByGroup(tasks []types.Task) []types.Task {
 }
 
 func printPreSummaryTask(cluster string, all, matched []types.Task) {
-	log.Printf("[%s] All Tasks: %d, Tasks to stop: %d\n", cluster, len(all), len(matched))
+	log.Printf("[%s] All Tasks: %d, Tasks to stop: %d", cluster, len(all), len(matched))
 	if len(matched) > 0 {
-		log.Println("Tasks to stop:")
+		log.Printf("\nTasks to stop:\n")
 		for i, task := range matched {
 			log.Printf(" [%d] Group: %s, Arn: %s\n", i+1, *task.Group, *task.TaskArn)
 		}
 	} else {
-		log.Println(" -> No tasks to stop")
+		log.Printf(" -> No tasks to stop\n")
 	}
 }

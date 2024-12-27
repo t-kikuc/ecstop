@@ -101,13 +101,13 @@ func printPreSummary(cluster string, services []types.Service, runningServices [
 	total := len(services)
 	running := len(runningServices)
 
-	log.Printf("[%s] Total Services: %d, Running Services: %d\n", cluster, total, running)
+	log.Printf("[%s] Total Services: %d, Running Services: %d", cluster, total, running)
 	if running > 0 {
-		log.Println("Running Services:")
+		log.Printf("\nRunning Services:\n")
 		for i, s := range runningServices {
 			log.Printf(" [%d] %s) running: %d, desired: %d\n", i+1, *s.ServiceName, s.RunningCount, s.DesiredCount)
 		}
 	} else {
-		log.Println(" -> No service to scale-in")
+		log.Printf(" -> No service to scale-in\n")
 	}
 }
