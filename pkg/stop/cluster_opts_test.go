@@ -60,3 +60,32 @@ func TestAddClusterFlags(t *testing.T) {
 		})
 	}
 }
+
+func TestShortenClusterName(t *testing.T) {
+	t.Parallel()
+
+	testcases := []struct {
+		title string
+		arn   string
+		want  string
+	}{
+		{
+			title: "cluster ARN",
+			arn:   "arn:aws:ecs:us-west-2:123456789012:cluster/cluster-name",
+			want:  "cluster-name",
+		},
+		{
+			title: "cluster name",
+			arn:   "cluster-name",
+			want:  "cluster-name",
+		},
+	}
+
+	for _, tc := range testcases {
+		tc := tc
+		t.Run(tc.title, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.want, shortenClusterArn(tc.arn))
+		})
+	}
+}
