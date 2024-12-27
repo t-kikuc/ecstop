@@ -168,6 +168,9 @@ func (c *ECSClient) ListContainerInstances(ctx context.Context, cluster string) 
 		if err != nil {
 			return nil, err
 		}
+		if len(listOut.ContainerInstanceArns) == 0 {
+			break
+		}
 
 		descOut, err := c.client.DescribeContainerInstances(ctx, &ecs.DescribeContainerInstancesInput{
 			Cluster:            aws.String(cluster),
