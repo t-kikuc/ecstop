@@ -67,7 +67,7 @@ func stopInstances(ctx context.Context, ecsCli *client.ECSClient, ec2Cli *client
 		return err
 	}
 	if len(instanceArns) == 0 {
-		log.Printf("[%s] No instance found in cluster\n", cluster)
+		log.Printf("[%s] No instances found in cluster\n", cluster)
 		return nil
 	}
 
@@ -76,18 +76,19 @@ func stopInstances(ctx context.Context, ecsCli *client.ECSClient, ec2Cli *client
 	if err := ec2Cli.StopInstances(ctx, instanceArns); err != nil {
 		return fmt.Errorf("failed to stop instances: %w", err)
 	}
-	log.Printf(" -> Successfully stopped %d instances\n", len(instanceArns))
+	log.Printf(" -> ✅Successfully stopped %d instances\n", len(instanceArns))
 	return nil
 }
 
 func printPreSummaryInstance(cluster string, instanceArns []string) {
-	log.Printf("[%s] Instances: %d\n", cluster, len(instanceArns))
-	if len(instanceArns) > 0 {
+	txt := fmt.Sprintf("[%s] Instances: %d", cluster, len(instanceArns))
+	if len(instanceArns) <= 0 {
+		log.Printf("%s -> Not instances to stop", txt)
+	} else {
+		log.Println(txt)
 		log.Println("Instances to stop:")
 		for i, inst := range instanceArns {
 			log.Printf(" [%d] %s\n", i+1, inst)
 		}
-	} else {
-		log.Println(" -> No instance to stop")
 	}
 }

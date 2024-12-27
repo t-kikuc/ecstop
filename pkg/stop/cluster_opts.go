@@ -2,6 +2,7 @@ package stop
 
 import (
 	"context"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/pkg/client"
@@ -26,7 +27,7 @@ func addClusterFlags(c *cobra.Command, clusterP *clusterOptions) {
 	c.MarkFlagsMutuallyExclusive(flag_cluster, flag_allClusters)
 }
 
-func (co clusterOptions) DecideClusters(ctx context.Context, cli *client.ECSClient) ([]string, error) {
+func (co clusterOptions) DecideClusters(ctx context.Context, cli *client.ECSClient) (clusterNames []string, err error) {
 	if co.cluster != "" {
 		return []string{co.cluster}, nil
 	}
@@ -36,5 +37,21 @@ func (co clusterOptions) DecideClusters(ctx context.Context, cli *client.ECSClie
 	if err != nil {
 		return nil, err
 	}
-	return clusters, nil
+
+	for _, cluster := range clusters {
+		clusterNames = append(clusterNames, shortenClusterArn(cluster))
+	}
+
+	return clusterNames, nil
+}
+
+// shortenClusterArn transforms arn:aws:ecs:us-west-2:123456789012:cluster/cluster-name -> cluster-name
+func shortenClusterArn(arn string) string {
+	if strings.Contains(arn, "/") {
+		split := strings.Split(arn, "/")
+		return split[len(split)-1]
+	} else {
+		// Maybe it's already a cluster name
+		return arn
+	}
 }

@@ -2,6 +2,7 @@ package stop
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -93,7 +94,7 @@ func (o *taskOptions) stopTasks(ctx context.Context, cli *client.ECSClient, clus
 		if err = cli.StopTask(ctx, cluster, *task.TaskArn); err != nil {
 			return err
 		}
-		log.Printf(" -> Successfully stopped Task: %s\n", *task.TaskArn)
+		log.Printf(" -> ✅Successfully stopped Task: %s\n", *task.TaskArn)
 	}
 	return nil
 }
@@ -122,13 +123,14 @@ func (o *taskOptions) filterByGroup(tasks []types.Task) []types.Task {
 }
 
 func printPreSummaryTask(cluster string, all, matched []types.Task) {
-	log.Printf("[%s] All Tasks: %d, Tasks to stop: %d\n", cluster, len(all), len(matched))
-	if len(matched) > 0 {
-		log.Println("Tasks to stop:")
+	txt := fmt.Sprintf("[%s] All Tasks: %d, Tasks to stop: %d", cluster, len(all), len(matched))
+	if len(matched) <= 0 {
+		log.Printf("%s -> No tasks to stop\n", txt)
+	} else {
+		log.Println(txt)
+		log.Printf("\nTasks to stop:\n")
 		for i, task := range matched {
 			log.Printf(" [%d] Group: %s, Arn: %s\n", i+1, *task.Group, *task.TaskArn)
 		}
-	} else {
-		log.Println(" -> No tasks to stop")
 	}
 }
