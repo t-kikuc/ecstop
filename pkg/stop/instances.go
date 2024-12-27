@@ -81,7 +81,7 @@ func stopInstances(ctx context.Context, ecsCli *client.ECSClient, ec2Cli *client
 }
 
 func printPreSummaryInstance(cluster string, instanceArns []string) {
-	txt := fmt.Sprintf("[%s] Instances: %d\n", cluster, len(instanceArns))
+	txt := fmt.Sprintf("[%s] Instances: %d", cluster, len(instanceArns))
 	if len(instanceArns) <= 0 {
 		log.Printf("%s -> Not instances to stop", txt)
 	} else {
