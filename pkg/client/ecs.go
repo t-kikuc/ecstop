@@ -158,7 +158,7 @@ func (c *ECSClient) StopTask(ctx context.Context, cluster, taskArn string) error
 	return nil
 }
 
-func (c *ECSClient) ListContainerInstances(ctx context.Context, cluster string) (instanceIDs []string, err error) {
+func (c *ECSClient) DescribeContainerInstances(ctx context.Context, cluster string) (instances []types.ContainerInstance, err error) {
 	in := &ecs.ListContainerInstancesInput{
 		Cluster:    aws.String(cluster),
 		MaxResults: aws.Int32(100), // DescribeContainerInstances also supports up to 100 instances
@@ -180,14 +180,12 @@ func (c *ECSClient) ListContainerInstances(ctx context.Context, cluster string) 
 			return nil, err
 		}
 
-		for _, ci := range descOut.ContainerInstances {
-			instanceIDs = append(instanceIDs, *ci.Ec2InstanceId)
-		}
+		instances = append(instances, descOut.ContainerInstances...)
 
 		if listOut.NextToken == nil {
 			break
 		}
 		in.NextToken = listOut.NextToken
 	}
-	return instanceIDs, nil
+	return instances, nil
 }

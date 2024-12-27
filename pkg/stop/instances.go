@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/spf13/cobra"
 	"github.com/t-kikuc/ecstop/pkg/client"
 )
@@ -62,33 +63,71 @@ func (o *instanceOptions) stop(ctx context.Context) error {
 }
 
 func stopInstances(ctx context.Context, ecsCli *client.ECSClient, ec2Cli *client.EC2Client, cluster string) error {
-	instanceArns, err := ecsCli.ListContainerInstances(ctx, cluster)
+	instances, err := ecsCli.DescribeContainerInstances(ctx, cluster)
 	if err != nil {
 		return err
 	}
-	if len(instanceArns) == 0 {
+	if len(instances) == 0 {
 		log.Printf("[%s] No instances found in cluster\n", cluster)
 		return nil
 	}
 
-	printPreSummaryInstance(cluster, instanceArns)
+	toStop, stopped, toSkip := categorizeInstances(instances)
+	printPreSummaryInstance(cluster, toStop, stopped, toSkip)
+	if len(toStop) <= 0 {
+		return nil
+	}
 
-	if err := ec2Cli.StopInstances(ctx, instanceArns); err != nil {
+	instanceIDs := make([]string, 0, len(toStop))
+	for _, inst := range toStop {
+		instanceIDs = append(instanceIDs, *inst.Ec2InstanceId)
+	}
+
+	if err := ec2Cli.StopInstances(ctx, instanceIDs); err != nil {
 		return fmt.Errorf("failed to stop instances: %w", err)
 	}
-	log.Printf(" -> ✅Successfully stopped %d instances\n", len(instanceArns))
+	log.Printf(" -> ✅Successfully stopped %d instances\n", len(instances))
 	return nil
 }
 
-func printPreSummaryInstance(cluster string, instanceArns []string) {
-	txt := fmt.Sprintf("[%s] Instances: %d", cluster, len(instanceArns))
-	if len(instanceArns) <= 0 {
+func printPreSummaryInstance(cluster string, toStop, notConnected, toSkip []types.ContainerInstance) {
+	txt := fmt.Sprintf("[%s] Total Instances: %d (to Stop: %d, Not Connected: %d, External or something: %d)", cluster, len(toStop)+len(notConnected)+len(toSkip), len(toStop), len(notConnected), len(toSkip))
+	if len(toStop) <= 0 {
 		log.Printf("%s -> Not instances to stop", txt)
 	} else {
 		log.Println(txt)
 		log.Println("Instances to stop:")
-		for i, inst := range instanceArns {
-			log.Printf(" [%d] %s\n", i+1, inst)
+		for i, inst := range toStop {
+			log.Printf(" [%d] %s\n", i+1, *inst.Ec2InstanceId)
 		}
 	}
+}
+
+func categorizeInstances(instances []types.ContainerInstance) (toStop, notConnected, toSkip []types.ContainerInstance) {
+	for _, i := range instances {
+		if isExternalInstance(i) {
+			// External instances cannot be stopped.
+			toSkip = append(toSkip, i)
+			continue
+		}
+
+		if !i.AgentConnected {
+			// Instances that are not connected to the ECS agent cannot be stopped.
+			notConnected = append(notConnected, i)
+			continue
+		}
+
+		// i.AgentConnected
+		toStop = append(toStop, i)
+	}
+	return toStop, notConnected, toSkip
+}
+
+func isExternalInstance(instance types.ContainerInstance) bool {
+	for _, a := range instance.Attributes {
+		if *a.Name == "ecs.capability.external" {
+			return true
+		}
+	}
+	return false
 }
